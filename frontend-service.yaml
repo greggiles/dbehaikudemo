@@ -8,12 +8,32 @@ metadata:
     tier: frontend
 spec:
   # comment or delete the following line if you want to use a LoadBalancer
-  type: LoadBalancer
+  # type: LoadBalancer
   # type: NodePort
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30042
+    protocol: TCP
+    # nodePort: 30042
   selector:
     app: guestbook
     tier: frontend
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-myservicea
+  namespace: demotestguestbook
+spec:
+  rules:
+  - host: guestbook
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+  ingressClassName: nginx
